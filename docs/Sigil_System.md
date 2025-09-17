@@ -90,6 +90,5 @@ draw_sigil(mean_phi=0.7, var_phi=0.2, color='gold', layer_label='Conv1', save_pa
 
 ---
 
-**Ready to visualize your guilded cognition?  
-Specify your preferred style, color palette, or ritual arrangement,  
-and we will compose your model’s mythic map.**
+
+
