@@ -424,3 +424,4 @@ class SigilNetworkManager:
         plt.close(fig)
         
         return filename
+
