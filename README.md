@@ -91,11 +91,10 @@ A `SigilNetworkManager` doesn't just track loss; it builds a **living map** of t
 
 1.  **Install the framework:**
 
-    ```bash
-    git clone https://github.com/Saranoah/Sigil_Neura_Network.git
-    cd Sigil_Neura_Network
-    pip install -r requirements.txt
-    ```
+   git clone https://github.com/Saranoah/Sigil_Neura_Network_v2--
+cd Sigil_Neura_Network_v2--
+pip install -r requirements.txt
+
 
 2.  **Wrap your model:**
 
@@ -158,7 +157,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 @software{Ali_Sigil_Network_2024,
     author = {Ali, Israa},
     title = {Sigil Network: A Kintsugi-Inspired AI Framework},
-    url = {https://github.com/Saranoah/Sigil_Neura_Network},
+    url = {https://github.com/Saranoah/Sigil_Neura_Network_V2},
     year = {2024}
 }
 ```
