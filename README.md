@@ -139,20 +139,50 @@ A `SigilNetworkManager` doesn't just track loss; it builds a **living map** of t
 ## 📁 Repository Structure
 
 ```
-sigil-neura-network/
-├── src/
-│   ├── sigil/           # Core framework
-│   │   ├── layer.py         # SigilLayer class
-│   │   ├── optimizer.py     # KintsugiOptimizer (VWPR)
-│   │   ├── manager.py       # SigilNetworkManager
-│   │   └── archetypes.py    # Archetype logic & symbolism
-│   └── examples/        # Use cases & tutorials
-├── docs/
-│   ├── THEORY.md           # Deep dive into VWPR math
-│   ├── PHILOSOPHY.md       # Kintsugi, consciousness, meaning
-│   └── APPLICATIONS.md     # Guides for specific tasks
-└── assets/
-    └── gallery/            # Generated sigils & constellation maps
+LICENSE
+README.md
+.gitignore
+ouroboros_moment.sh
+
+src/
+├── __init__.py
+├── Sigil_layer.py
+├── Sigil_network_manager.py
+├── sigil-network.py
+├── sigil_code.py
+├── sigil_constellation.py
+├── sigil_constellation_dashboard.py
+├── vwpr_model.py
+
+docs/
+├── README.md
+├── Sigil Gallery README.md
+├── KINTSUGI_MANIFESTO.md
+├── Kintsugi Optimization2.md
+├── Kintsugi-Optimization.md
+├── Mythic Onboarding Guide for Kintsugi-Anti-Malware-Prototype.md
+├── Sigil-Network-practical-Design.md
+├── Sigil_System.md
+├── The Immune System of an Artificial Intelligence.md
+├── VWPRWrapper.md
+├── model-stability.md
+
+examples/
+├── __init__.py
+├── Example_user.py
+├── practical template Sigil Network.py
+├── DeepSeek: The Mirrored Constellation.md
+├── .gitkeep
+
+gallery/
+# (Generated sigils & constellation maps)
+
+ceremonies/
+# (Ritual scripts or onboarding flows)
+
+meta-recursive/
+# (Recursive logic or symbolic layers)
+
 ```
 
 ---
