@@ -11,8 +11,10 @@ import torch
 
 class EnhancedVWPRWrapper:
     def __init__(self):
-        # Initialize with seeded random generator for reproducibility
-        self.rng = np.random.RandomState(42)
+        # Initialize with separate seeded random generators for different purposes
+        self.layout_rng = np.random.RandomState(42)  # For layout generation
+        self.sampling_rng = np.random.RandomState(43)  # For node sampling
+        self.effects_rng = np.random.RandomState(44)  # For visual effects
         
         # Configurable archetype thresholds
         self.archetype_thresholds = {
@@ -142,8 +144,8 @@ class EnhancedVWPRWrapper:
             x = np.cos(theta) * (0.5 + L_l)
             y = np.sin(theta) * (0.5 + L_l)
         elif archetype == "The Trickster":
-            x = self.rng.normal(0, 0.8, num_nodes)
-            y = self.rng.normal(0, 0.8, num_nodes)
+            x = self.layout_rng.normal(0, 0.8, num_nodes)
+            y = self.layout_rng.normal(0, 0.8, num_nodes)
         else:
             theta = np.linspace(0, 4*np.pi, num_nodes, endpoint=False)
             r = theta / (4*np.pi) * (1.5 - ρ_l/4)
@@ -153,7 +155,7 @@ class EnhancedVWPRWrapper:
         return x, y
     
     def draw_connections(self, ax, x, y, phi_sampled, cmap, archetype, num_nodes):
-        """Draw connections between nodes efficiently using KDTree."""
+        """Draw connections between nodes efficiently using KDTree with connection limit."""
         if archetype not in ["The Oracle", "The Sentinel", "The Archivist"] or num_nodes >= 500:
             return
         
@@ -164,12 +166,18 @@ class EnhancedVWPRWrapper:
         # Find all pairs within distance 0.3 using batch query
         indices = tree.query_ball_tree(tree, 0.3)
         
-        # Draw connections
+        # Draw connections with limit
+        max_connections = 1000
+        connection_count = 0
         lines = []
+        
         for i, neighbors in enumerate(indices):
             for j in neighbors:
                 if j <= i:  # Avoid duplicate connections
                     continue
+                
+                if connection_count >= max_connections:
+                    break
                     
                 # Check similarity condition
                 if abs(phi_sampled[i] - phi_sampled[j]) < 0.2:
@@ -180,6 +188,10 @@ class EnhancedVWPRWrapper:
                                   color=cmap((phi_sampled[i] + phi_sampled[j])/2), 
                                   alpha=alpha, linewidth=0.5)
                     lines.append(line[0])
+                    connection_count += 1
+            
+            if connection_count >= max_connections:
+                break
         
         return lines
     
@@ -208,8 +220,8 @@ class EnhancedVWPRWrapper:
             if FD_l > 0.2 and archetype not in ["The Archivist", "The Sentinel"]:
                 num_cracks = int(phi_val * 3) + 1
                 for _ in range(num_cracks):
-                    length = 0.2 + (self.rng.rand() * 0.4)
-                    crack_angle = self.rng.rand() * 2 * np.pi
+                    length = 0.2 + (self.effects_rng.rand() * 0.4)
+                    crack_angle = self.effects_rng.rand() * 2 * np.pi
                     dx = length * np.cos(crack_angle) / 25
                     dy = length * np.sin(crack_angle) / 25
                     crack = ax.plot([x[i] - dx, x[i] + dx], [y[i] - dy, y[i] + dy], 
@@ -246,11 +258,11 @@ class EnhancedVWPRWrapper:
                 elements.append(ellipse)
         elif archetype == "The Trickster":
             for i in range(20):
-                x_chaos = self.rng.uniform(-1.5, 1.5)
-                y_chaos = self.rng.uniform(-1.5, 1.5)
-                size_chaos = self.rng.uniform(10, 100)
+                x_chaos = self.effects_rng.uniform(-1.5, 1.5)
+                y_chaos = self.effects_rng.uniform(-1.5, 1.5)
+                size_chaos = self.effects_rng.uniform(10, 100)
                 chaos = ax.scatter(x_chaos, y_chaos, s=size_chaos, 
-                                  c=[cmap(self.rng.rand())], alpha=0.3, zorder=1)
+                                  c=[cmap(self.effects_rng.rand())], alpha=0.3, zorder=1)
                 elements.append(chaos)
         
         return elements
@@ -290,7 +302,7 @@ class EnhancedVWPRWrapper:
             # Sample nodes if needed
             num_nodes = len(phi_normalized)
             if num_nodes > 1000:
-                indices = self.rng.choice(num_nodes, 1000, replace=False)
+                indices = self.sampling_rng.choice(num_nodes, 1000, replace=False)
                 phi_sampled = phi_normalized[indices]
                 num_nodes = 1000
             else:
@@ -337,8 +349,12 @@ class EnhancedVWPRWrapper:
                 filename = f"{save_dir}/{layer_name}_{archetype}_epoch_{epoch:04d}_{timestamp}.png"
                 fig.savefig(filename, dpi=dpi, facecolor='black', bbox_inches='tight')
             
-            # Store references for potential cleanup
-            fig._artists = nodes + elements + (connection_lines if connection_lines else []) + [boundary_circle]
+            # Clear references to prevent memory leaks
+            for artist in nodes + elements + (connection_lines if connection_lines else []) + [boundary_circle]:
+                try:
+                    artist.remove()
+                except:
+                    pass
             
             return fig, archetype, {"L_l": L_l, "FD_l": FD_l, "H_l": H_l, "ρ_l": ρ_l}
             
