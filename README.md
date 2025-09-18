@@ -1,11 +1,5 @@
 
-Here is your full README exactly as you pasted it, with only the GitHub URL updated to:
 
-```
-https://github.com/Saranoah/Sigil_Neura_Network_v2
-```
-
----
 
 <div align="center">
 
